@@ -13,7 +13,10 @@ public class Calculator implements ActionListener{
     JButton[] functionButtons = new JButton[9];
     JButton addButton,subButton,mulButton,divButton;
     JButton decButton, equButton, delButton, clrButton, negButton;
+    JButton hisButton;
     JPanel panel;
+    JToolBar toolBar;
+    JFrame r;
 
     Font myFont = new Font("宋体",Font.BOLD,30);
 
@@ -24,13 +27,15 @@ public class Calculator implements ActionListener{
 
         frame = new JFrame("Calculator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(420, 550);
+        frame.setSize(420, 450);
         frame.setLayout(null);
 
         textField = new JTextField();
-        textField.setBounds(50, 25, 300, 50);
+        textField.setBounds(50, 45, 300, 50);
         textField.setFont(myFont);
         textField.setEditable(false);
+
+        toolBar = new JToolBar();
 
         addButton = new JButton("+");
         subButton = new JButton("-");
@@ -41,6 +46,14 @@ public class Calculator implements ActionListener{
         delButton = new JButton("Del");
         clrButton = new JButton("Clr");
         negButton = new JButton("(-)");
+
+        hisButton = new JButton();
+        hisButton.setActionCommand("History");
+        hisButton.setToolTipText("查看历史记录");
+        hisButton.addActionListener(this);
+        hisButton.setText("历史记录");
+        toolBar.add(hisButton);
+        toolBar.setBounds(0,0,80,40);
 
         functionButtons[0] = addButton;
         functionButtons[1] = subButton;
@@ -91,6 +104,7 @@ public class Calculator implements ActionListener{
         panel.add(divButton);
 
         frame.add(panel);
+        frame.add(toolBar);
         frame.add(negButton);
         frame.add(delButton);
         frame.add(clrButton);
@@ -105,7 +119,6 @@ public class Calculator implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         for(int i=0;i<10;i++) {
             if(e.getSource() == numberButtons[i]) {
                 textField.setText(textField.getText().concat(String.valueOf(i)));
@@ -168,6 +181,20 @@ public class Calculator implements ActionListener{
             double temp = Double.parseDouble(textField.getText());
             temp*=-1;
             textField.setText(String.valueOf(temp));
+        }
+        if(e.getSource()==hisButton) {
+            if (r == null) {
+                r = new JFrame("历史记录");
+                r.setBounds(300, 100, 400, 200);
+                JPanel panel = new JPanel();
+                panel.setBackground(Color.GRAY);
+                JTextArea area = new JTextArea("", 10, 30);
+                area.setBackground(Color.LIGHT_GRAY);
+                area.setEditable(false);
+                panel.add(area);
+                r.add(panel);
+                r.setVisible(true);
+            }
         }
     }
 }
