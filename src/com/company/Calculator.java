@@ -16,7 +16,10 @@ public class Calculator implements ActionListener{
     JButton hisButton;
     JPanel panel;
     JToolBar toolBar;
+    JTextArea area;
     JFrame r;
+    String[] arr = new String[100];
+    int index = 0;
 
     Font myFont = new Font("宋体",Font.BOLD,30);
 
@@ -153,18 +156,24 @@ public class Calculator implements ActionListener{
             switch(operator) {
                 case'+':
                     result=num1+num2;
+                    arr[index] = num1 + " + " + num2;
                     break;
                 case'-':
                     result=num1-num2;
+                    arr[index] = num1 + " - " + num2;
                     break;
                 case'*':
                     result=num1*num2;
+                    arr[index] = num1 + " * " + num2;
                     break;
                 case'/':
                     result=num1/num2;
+                    arr[index] = num1 + " / " + num2;
                     break;
             }
             textField.setText(String.valueOf(result));
+            arr[index] += " = " + result + "\n";
+            index++;
             num1=result;
         }
         if(e.getSource()==clrButton) {
@@ -188,12 +197,23 @@ public class Calculator implements ActionListener{
                 r.setBounds(300, 100, 400, 200);
                 JPanel panel = new JPanel();
                 panel.setBackground(Color.GRAY);
-                JTextArea area = new JTextArea("", 10, 30);
+                area = new JTextArea("", 10, 30);
                 area.setBackground(Color.LIGHT_GRAY);
                 area.setEditable(false);
+                for ( String af : arr) {
+                    area.append(af);
+                }
                 panel.add(area);
                 r.add(panel);
                 r.setVisible(true);
+            }
+            else {
+                area.setText(" ");
+                r.setVisible(true);
+                int j = 0;
+                for ( String af : arr) {
+                    area.append(af);
+                }
             }
         }
     }
