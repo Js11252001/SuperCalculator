@@ -18,6 +18,7 @@ public class Calculator implements ActionListener{
     JToolBar toolBar;
     JTextArea area;
     JFrame r;
+    JScrollPane scrollPane;
     String[] arr = new String[100];
     int index = 0;
 
@@ -30,7 +31,7 @@ public class Calculator implements ActionListener{
 
         frame = new JFrame("Calculator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(420, 450);
+        frame.setSize(420, 550);
         frame.setLayout(null);
 
         textField = new JTextField();
@@ -195,16 +196,19 @@ public class Calculator implements ActionListener{
             if (r == null) {
                 r = new JFrame("历史记录");
                 r.setBounds(300, 100, 400, 200);
-                JPanel panel = new JPanel();
-                panel.setBackground(Color.GRAY);
-                area = new JTextArea("", 10, 30);
+                area = new JTextArea();
+                area.setBounds(23,217,350,180);
                 area.setBackground(Color.LIGHT_GRAY);
                 area.setEditable(false);
                 for ( String af : arr) {
                     area.append(af);
                 }
-                panel.add(area);
-                r.add(panel);
+                scrollPane = new JScrollPane();
+                scrollPane.setBounds(23,217,350,180);
+                scrollPane.setViewportView(area);
+                scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+                r.add(scrollPane);
                 r.setVisible(true);
             }
             else {
