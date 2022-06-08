@@ -3,24 +3,17 @@ package com.company;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-
+import java.io.*;
+import java.util.Scanner;
 
 public class Calculator implements ActionListener{
-
+    Operand operand =new Operand();
+    Number num = new Number();
+    History history = new History();
     JFrame frame;
     JTextField textField;
-    JButton[] numberButtons = new JButton[10];
-    JButton[] functionButtons = new JButton[9];
-    JButton addButton,subButton,mulButton,divButton;
-    JButton decButton, equButton, delButton, clrButton, negButton;
-    JButton hisButton;
     JPanel panel;
-    JToolBar toolBar;
-    JTextArea area;
-    JFrame r;
-    JScrollPane scrollPane;
-    String[] arr = new String[100];
-    int index = 0;
+
 
     Font myFont = new Font("宋体",Font.BOLD,30);
 
@@ -39,186 +32,134 @@ public class Calculator implements ActionListener{
         textField.setFont(myFont);
         textField.setEditable(false);
 
-        toolBar = new JToolBar();
+        history.hisButton.addActionListener(this);
 
-        addButton = new JButton("+");
-        subButton = new JButton("-");
-        mulButton = new JButton("*");
-        divButton = new JButton("/");
-        decButton = new JButton(".");
-        equButton = new JButton("=");
-        delButton = new JButton("Del");
-        clrButton = new JButton("Clr");
-        negButton = new JButton("(-)");
-
-        hisButton = new JButton();
-        hisButton.setActionCommand("History");
-        hisButton.setToolTipText("查看历史记录");
-        hisButton.addActionListener(this);
-        hisButton.setText("历史记录");
-        toolBar.add(hisButton);
-        toolBar.setBounds(0,0,80,40);
-
-        functionButtons[0] = addButton;
-        functionButtons[1] = subButton;
-        functionButtons[2] = mulButton;
-        functionButtons[3] = divButton;
-        functionButtons[4] = decButton;
-        functionButtons[5] = equButton;
-        functionButtons[6] = delButton;
-        functionButtons[7] = clrButton;
-        functionButtons[8] = negButton;
 
         for(int i =0;i<9;i++) {
-            functionButtons[i].addActionListener(this);
-            functionButtons[i].setFont(myFont);
-            functionButtons[i].setFocusable(false);
+            operand.functionButtons[i].addActionListener(this);
+            operand.functionButtons[i].setFont(myFont);
+            operand.functionButtons[i].setFocusable(false);
         }
 
         for(int i =0;i<10;i++) {
-            numberButtons[i] = new JButton(String.valueOf(i));
-            numberButtons[i].addActionListener(this);
-            numberButtons[i].setFont(myFont);
-            numberButtons[i].setFocusable(false);
+            num.numberButtons[i] = new JButton(String.valueOf(i));
+            num.numberButtons[i].addActionListener(this);
+            num.numberButtons[i].setFont(myFont);
+            num.numberButtons[i].setFocusable(false);
         }
-
-        negButton.setBounds(50,430,100,50);
-        delButton.setBounds(150,430,100,50);
-        clrButton.setBounds(250,430,100,50);
 
         panel = new JPanel();
         panel.setBounds(50, 100, 300, 300);
         panel.setLayout(new GridLayout(4,4,10,10));
 
-        panel.add(numberButtons[1]);
-        panel.add(numberButtons[2]);
-        panel.add(numberButtons[3]);
-        panel.add(addButton);
-        panel.add(numberButtons[4]);
-        panel.add(numberButtons[5]);
-        panel.add(numberButtons[6]);
-        panel.add(subButton);
-        panel.add(numberButtons[7]);
-        panel.add(numberButtons[8]);
-        panel.add(numberButtons[9]);
-        panel.add(mulButton);
-        panel.add(decButton);
-        panel.add(numberButtons[0]);
-        panel.add(equButton);
-        panel.add(divButton);
+        operand.AddToPanel(panel,num);
 
         frame.add(panel);
-        frame.add(toolBar);
-        frame.add(negButton);
-        frame.add(delButton);
-        frame.add(clrButton);
+        frame.add(history.toolBar);
+        operand.AddToFrame(frame);
         frame.add(textField);
         frame.setVisible(true);
-    }
 
-    public static void main(String[] args) {
+        frame.addWindowListener(new WindowAdapter() {
+            /**
+             * Invoked when a window has been opened.
+             *
+             * @param e
+             */
+            @Override
+            public void windowOpened(WindowEvent e) {
+                super.windowOpened(e);
+                File file = new File("./src/data.txt");
+                try {
+                    Scanner inputFile = new Scanner(file);
+                    while (inputFile.hasNextLine()) {
+                        history.area.append(inputFile.nextLine() + "\n");
+                    }
+                } catch (FileNotFoundException fileNotFoundException) {
+                    fileNotFoundException.printStackTrace();
+                }
+            }
 
-        Calculator calc = new Calculator();
+            /**
+             * Invoked when a window is in the process of being closed.
+             * The close operation can be overridden at this point.
+             *
+             * @param e
+             */
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                File file = new File("./src/data.txt");
+                String arr = history.area.getText();
+                try {
+                    FileWriter fileWriter = new FileWriter(file);
+                    fileWriter.write(arr);
+                    fileWriter.close();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         for(int i=0;i<10;i++) {
-            if(e.getSource() == numberButtons[i]) {
+            if(e.getSource() == num.numberButtons[i]) {
                 textField.setText(textField.getText().concat(String.valueOf(i)));
             }
         }
-        if(e.getSource()==decButton) {
+        if(e.getSource()==operand.decButton) {
             textField.setText(textField.getText().concat("."));
         }
-        if(e.getSource()==addButton) {
+        if(e.getSource()==operand.addButton) {
             num1 = Double.parseDouble(textField.getText());
             operator ='+';
             textField.setText("");
         }
-        if(e.getSource()==subButton) {
+        if(e.getSource()==operand.subButton) {
             num1 = Double.parseDouble(textField.getText());
             operator ='-';
             textField.setText("");
         }
-        if(e.getSource()==mulButton) {
+        if(e.getSource()==operand.mulButton) {
             num1 = Double.parseDouble(textField.getText());
             operator ='*';
             textField.setText("");
         }
-        if(e.getSource()==divButton) {
+        if(e.getSource()==operand.divButton) {
             num1 = Double.parseDouble(textField.getText());
             operator ='/';
             textField.setText("");
         }
-        if(e.getSource()==equButton) {
+        if(e.getSource()==operand.equButton) {
             num2=Double.parseDouble(textField.getText());
 
-            switch(operator) {
-                case'+':
-                    result=num1+num2;
-                    arr[index] = num1 + " + " + num2;
-                    break;
-                case'-':
-                    result=num1-num2;
-                    arr[index] = num1 + " - " + num2;
-                    break;
-                case'*':
-                    result=num1*num2;
-                    arr[index] = num1 + " * " + num2;
-                    break;
-                case'/':
-                    result=num1/num2;
-                    arr[index] = num1 + " / " + num2;
-                    break;
-            }
+            Operator op = new Operator(num1,num2,result,operator, history.area);
+            num1= op.num1;
+            num2= op.num2;
+            result= op.result;
+
+
             textField.setText(String.valueOf(result));
-            arr[index] += " = " + result + "\n";
-            index++;
+            history.area.append(" = " + result + "\n");
             num1=result;
         }
-        if(e.getSource()==clrButton) {
+        if(e.getSource()==operand.clrButton) {
             textField.setText("");
         }
-        if(e.getSource()==delButton) {
+        if(e.getSource()==operand.delButton) {
             String string = textField.getText();
             textField.setText("");
             for(int i=0;i<string.length()-1;i++) {
                 textField.setText(textField.getText()+string.charAt(i));
             }
         }
-        if(e.getSource()==negButton) {
+        if(e.getSource()==operand.negButton) {
             double temp = Double.parseDouble(textField.getText());
             temp*=-1;
             textField.setText(String.valueOf(temp));
         }
-        if(e.getSource()==hisButton) {
-            if (r == null) {
-                r = new JFrame("历史记录");
-                r.setBounds(300, 100, 400, 200);
-                area = new JTextArea();
-                area.setBounds(23,217,350,180);
-                area.setBackground(Color.LIGHT_GRAY);
-                area.setEditable(false);
-                for ( String af : arr) {
-                    area.append(af);
-                }
-                scrollPane = new JScrollPane();
-                scrollPane.setBounds(23,217,350,180);
-                scrollPane.setViewportView(area);
-                scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-                r.add(scrollPane);
-                r.setVisible(true);
-            }
-            else {
-                area.setText(" ");
-                r.setVisible(true);
-                int j = 0;
-                for ( String af : arr) {
-                    area.append(af);
-                }
-            }
-        }
+        history.CheckAction(e);
     }
 }
