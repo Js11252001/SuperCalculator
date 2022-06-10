@@ -4,9 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.*;
 
 public class Calculator implements ActionListener{
     OperandUI operandUI =new OperandUI();
@@ -15,7 +13,7 @@ public class Calculator implements ActionListener{
     JFrame frame;
     JTextField textField;
     JPanel panel;
-    Queue<String> queue;
+    Deque<String> deque;
     boolean isFirst;
 
 
@@ -30,8 +28,7 @@ public class Calculator implements ActionListener{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(420, 550);
         frame.setLayout(null);
-        queue = new PriorityQueue();
-
+        deque = new ArrayDeque<>();
         textField = new JTextField();
         textField.setBounds(50, 45, 300, 50);
         textField.setFont(myFont);
@@ -74,7 +71,7 @@ public class Calculator implements ActionListener{
             @Override
             public void windowOpened(WindowEvent e) {
                 super.windowOpened(e);
-                File file = new File("./src/data.txt");
+                File file = new File("./src/HistoryRecord.txt");
                 try {
                     Scanner inputFile = new Scanner(file);
                     while (inputFile.hasNextLine()) {
@@ -94,7 +91,7 @@ public class Calculator implements ActionListener{
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
-                File file = new File("./src/data.txt");
+                File file = new File("./src/HistoryRecord.txt");
                 String arr = history.area.getText();
                 try {
                     FileWriter fileWriter = new FileWriter(file);
@@ -121,7 +118,7 @@ public class Calculator implements ActionListener{
             if (isFirst) {
                 num1 = Double.parseDouble(textField.getText());
                 operator = '+';
-                queue.add(num1 + " + ");
+                deque.add(num1 + "+");
                 textField.setText("");
                 isFirst = false;
             }
@@ -129,7 +126,7 @@ public class Calculator implements ActionListener{
                 num2 = Double.parseDouble(textField.getText());
                 num1 = switchOperator(num1, num2, operator);
                 operator = '+';
-                queue.add(num2 + " + ");
+                deque.add(num2 + "+");
                 textField.setText("");
             }
         }
@@ -137,7 +134,7 @@ public class Calculator implements ActionListener{
             if (isFirst) {
                 num1 = Double.parseDouble(textField.getText());
                 operator = '-';
-                queue.add(num1 + " - ");
+                deque.add(num1 + "-");
                 textField.setText("");
                 isFirst = false;
             }
@@ -145,7 +142,7 @@ public class Calculator implements ActionListener{
                 num2 = Double.parseDouble(textField.getText());
                 num1 = switchOperator(num1, num2, operator);
                 operator = '-';
-                queue.add(num2 + " - ");
+                deque.add(num2 + "-");
                 textField.setText("");
             }
         }
@@ -153,7 +150,7 @@ public class Calculator implements ActionListener{
             if (isFirst) {
                 num1 = Double.parseDouble(textField.getText());
                 operator = '*';
-                queue.add(num1 + " * ");
+                deque.add(num1 + "*");
                 textField.setText("");
                 isFirst = false;
             }
@@ -161,7 +158,7 @@ public class Calculator implements ActionListener{
                 num2 = Double.parseDouble(textField.getText());
                 num1 = switchOperator(num1, num2, operator);
                 operator = '*';
-                queue.add(num2 + " * ");
+                deque.add(num2 + "*");
                 textField.setText("");
             }
         }
@@ -169,7 +166,7 @@ public class Calculator implements ActionListener{
             if (isFirst) {
                 num1 = Double.parseDouble(textField.getText());
                 operator = '/';
-                queue.add(num1 + " / ");
+                deque.add(num1 + "/");
                 textField.setText("");
                 isFirst = false;
             }
@@ -177,15 +174,15 @@ public class Calculator implements ActionListener{
                 num2 = Double.parseDouble(textField.getText());
                 num1 = switchOperator(num1, num2, operator);
                 operator = '/';
-                queue.add(num2 + " / ");
+                deque.add(num2 + "/");
                 textField.setText("");
             }
         }
         if(e.getSource()== operandUI.equButton) {
             num2=Double.parseDouble(textField.getText());
-            Operator op = new Operator(num1, num2, result, operator, history.area, queue);
+            Operator op = new Operator(num1, num2, result, operator, history.area, deque);
             textField.setText(String.valueOf(op.result));
-            history.area.append(" = " + op.result + "\n");
+            history.area.append("=" + op.result + "\n");
             num1 = 0;
             num2 = 0;
             result = 0;
