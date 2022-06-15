@@ -1,0 +1,26 @@
+@startuml
+participant Actor
+Actor -> Calculator : actionPerformed
+activate Calculator
+Calculator -> Calculator : switchOperator
+activate Calculator
+Calculator --> Calculator
+deactivate Calculator
+Calculator -> Calculator : switchOperator
+activate Calculator
+Calculator --> Calculator
+deactivate Calculator
+Calculator -> Calculator : switchOperator
+activate Calculator
+Calculator --> Calculator
+deactivate Calculator
+Calculator -> Calculator : switchOperator
+activate Calculator
+Calculator --> Calculator
+deactivate Calculator
+Calculator -> HistoryUI : CheckAction
+activate HistoryUI
+HistoryUI --> Calculator
+deactivate HistoryUI
+return
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+participant Actor
+Actor -> Operator : func
+activate Operator
+Operator -> Operator : calc
+activate Operator
+Operator -> Operator : Oper2op
+activate Operator
+Operator -> Operator : changeMinus
+activate Operator
+Operator --> Operator
+deactivate Operator
+Operator --> Operator
+deactivate Operator
+Operator -> Operator : Oper2cha
+activate Operator
+Operator -> Operator : changeMinus
+activate Operator
+Operator --> Operator
+deactivate Operator
+Operator --> Operator
+deactivate Operator
+Operator --> Operator
+deactivate Operator
+return
+@enduml
